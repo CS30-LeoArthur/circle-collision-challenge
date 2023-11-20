@@ -9,6 +9,16 @@ BLUE = (0, 0, 255)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 
+def mouse_position_x():
+    pos = pygame.mouse.get_pos()
+    mouse_x = pos[0]
+    return mouse_x
+
+def mouse_position_y():
+    pos = pygame.mouse.get_pos()
+    mouse_y = pos[1]
+    return mouse_y
+
 class Player():
     def __init__(self, x, y, width, height, change_x, change_y):
         self.x = x
