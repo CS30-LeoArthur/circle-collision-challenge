@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 
 
 # Define Colors
@@ -10,15 +11,11 @@ BLUE = (0, 0, 255)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 800
 
-def mouse_position_x():
+def mouse_position():
     pos = pygame.mouse.get_pos()
     mouse_x = pos[0]
-    return mouse_x
-
-def mouse_position_y():
-    pos = pygame.mouse.get_pos()
     mouse_y = pos[1]
-    return mouse_y
+    return mouse_x, mouse_y
 
 def check_collision(player):
     for i in range(len(random_circles)):
@@ -29,6 +26,16 @@ def check_collision(player):
 
 def rectCollide(rect1, rect2):
     return rect1.x < rect2.x + rect2.width and rect1.y < rect2.y + rect2.height and rect1.x + rect1.width > rect2.x and rect1.y + rect1.height > rect2.y
+
+def distance_calc(player):
+    run = mouse_position()[0] - (player.x + player.width / 2)
+    rise = mouse_position()[1] - (player.y + player.height / 2) 
+    distance = math.sqrt(rise**2 + run**2)
+    
+    dy = rise * 3 / distance
+    dx = run * 3 / distance
+    return dx, dy
+
 
 class Circle():
     def __init__(self, x, y, width, height, colour):
@@ -42,23 +49,27 @@ class Circle():
         pygame.draw.ellipse(screen, self.colour, [self.x, self.y, self.width, self.height])
 
 class Player():
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, change_x, change_y):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.change_x = change_x
+        self.change_y = change_y
     
     def draw_player(self, screen):
         pygame.draw.ellipse(screen, GREY, [self.x, self.y, self.width, self.height])
         pygame.draw.ellipse(screen, BLUE, [self.x, self.y, self.width, self.height], 2)
     
     def update(self):
-        self.x = mouse_position_x() - (self.width / 2)
-        self.y = mouse_position_y() - (self.height / 2)
+        self.change_x, self.change_y = distance_calc(self)
+        self.y = self.y + self.change_y
+        self.x = self.x + self.change_x
+        
 
 
 # Program Variables
-player = Player(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2, 20, 20)
+player = Player(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2, 20, 20, 0, 0)
 random_circles = []
 
 def main():
